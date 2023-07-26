@@ -172,6 +172,9 @@ app.post(
   }
 );
 
+app.get('/', (req, res) => {
+    res.send('<h1>Welcome To Me &#x1F449; 🚀!</h1>')
+})
 
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
@@ -182,9 +185,6 @@ app.use(verifyJWT); //? Every route after it will use it
 app.use("/posts", require("./routes/posts"));
 app.use("/users", require("./routes/users"));
 
-app.get('/', (req, res) => {
-    res.send('<h1>Welcome To Me &#x1F449; 🚀!</h1>')
-})
 
 
 app.all("*", (req, res) => {
