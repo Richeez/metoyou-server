@@ -21,6 +21,9 @@ const filePayLoadExists = require("./middlewares/filePayLoadExists");
 const fileExtLimiter = require("./middlewares/fileExtLimiter");
 const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
+const logEvents = require('./logEvents')
+const EventEmitter = require('events')
+
 
 //? Connect to MongoDB
 connectDB();
@@ -65,6 +68,21 @@ const storage = multer.diskStorage({
 
 
 const upload = multer({ storage: storage });
+
+class MyEmitter extends EventEmitter { };
+//? initialize object
+const myEmitter = new MyEmitter();
+
+//? add listener for log events
+myEmitter.on('log', (msg) => logEvents(msg))
+
+setTimeout(() => {
+    //? Emmit events
+    myEmitter.emit('log', 'log event emmitted successfully')
+
+}, 2000);
+
+
 
 app.post("/post", upload.single("file"), async (req, res) => {
   try {
