@@ -29,7 +29,7 @@ app.use(logger);
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(credentials);
 //? Cross Origin Resource Sharing
-app.use(cors());
+app.use(cors(corsOptions));
 //?  Built-in middleware to handle urlencoded data;
 //?   in other words form data:
 //?   'content-type: application/x-www-form-urlencoded'
