@@ -29,7 +29,7 @@ app.use(logger);
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(credentials);
 //? Cross Origin Resource Sharing
-app.use(cors());
+app.use(cors(corsOptions));
 //?  Built-in middleware to handle urlencoded data;
 //?   in other words form data:
 //?   'content-type: application/x-www-form-urlencoded'
@@ -56,7 +56,6 @@ const storage = multer.diskStorage({
     cb(null, './public/assets/'); // Specify the directory where files will be stored
   },
   filename: (req, file, cb) => {
-    console.log("🚀 ~ file: server.js:53 ~ file:", file)
     const ext = path.extname(file.originalname);
     const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}${ext}`;
     console.log("file created:", fileName)
@@ -139,7 +138,6 @@ app.patch("/profile", upload.fields([
     }
 
     const result = await user.save();
-    console.log("🚀 ~ file: server.js:143 ~ ]), ~ result:", result)
     // const post = await Post.find();
     const { pwd, refreshToken, ...rest } = user._doc;
     res.status(201).json({ rest });
@@ -174,9 +172,6 @@ app.post(
   }
 );
 
-// app.use('/subdir', express.static(path.join(__dirname, '/public')));
-// app.use('/subdir', require('./routes/subdir'));
-// app.use("/", require("./routes/root"));
 
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
@@ -186,6 +181,10 @@ app.use("/refresh", require("./routes/refresh"));
 app.use(verifyJWT); //? Every route after it will use it
 app.use("/posts", require("./routes/posts"));
 app.use("/users", require("./routes/users"));
+
+app.get('/', (req, res) => {
+    res.send('<h1>Welcome To Me &#x1F449; 🚀!</h1>')
+})
 
 
 app.all("*", (req, res) => {
