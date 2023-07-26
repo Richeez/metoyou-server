@@ -1,4 +1,4 @@
-const allowedOrigins = `*`
+const allowedOrigins = ["*"]
 //     [
 //     'https://metoyou.vercel.app/',
 //     'https://metoyou-server.vercel.app/',
