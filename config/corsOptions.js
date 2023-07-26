@@ -4,7 +4,7 @@ const corsOptions = {
         console.log("Allowed origin:", allowedOrigin.indexOf(origin))
         allowedOrigin.indexOf(origin) !== -1  /*|| !origin */
             ? callback(null, true)
-            : callback(new Error('Not allowed by CORS'))
+            : callback(new Error('Not allowed by CORS'), null)
     },
     optionsSuccessStatus: 200
 }
