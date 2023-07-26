@@ -1,10 +1,11 @@
-const allowedOrigin = require('./allowedOrigins')
+const allowedOrigins = require('./allowedOrigins')
 const corsOptions = {
     origin: (origin, callback) => {
-        console.log("Allowed origin:", allowedOrigin.indexOf(origin))
-        allowedOrigin.indexOf(origin) !== -1  /*|| !origin */
-            ? callback(null, true)
-            : callback(new Error('Not allowed by CORS'), null)
+        console.log("Allowed origin:", allowedOrigins.indexOf(origin))
+        console.log("Unallowed origin:", !origin)
+        const isAllowedOrigin = allowedOrigins.includes(origin) || !origin;
+        callback(null, isAllowedOrigin);
+
     },
     optionsSuccessStatus: 200
 }

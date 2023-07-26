@@ -12,6 +12,8 @@ const credentials = require("./middlewares/credentials");
 const mongoose = require("mongoose");
 const connectDB = require("./config/DBConn");
 const fileUpload = require("express-fileupload");
+const morgan = require("morgan")
+const helmet = require("helmet")
 mongoose.set("strictQuery", true);
 const PORT = process?.env?.PORT ?? 4500;
 const { users, posts } = require("./data/index");
@@ -21,7 +23,6 @@ const filePayLoadExists = require("./middlewares/filePayLoadExists");
 const fileExtLimiter = require("./middlewares/fileExtLimiter");
 const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
-
 
 //? Connect to MongoDB
 connectDB();
@@ -35,6 +36,8 @@ app.use(cors(corsOptions));
 //?   in other words form data:
 //?   'content-type: application/x-www-form-urlencoded'
 app.use(express.urlencoded({ extended: false }));
+app.use(morgan("common"))
+app.use(helmet())
 
 //? Built-in middleware for json
 app.use(express.json());
@@ -45,18 +48,13 @@ app.use(cookieParser());
 app.use("/", express.static(path.join(__dirname, "/public")));
 app.post("/assets", express.static(path.join(__dirname, "public/assets")))
 
-//? Integrating serverless function
-app.use(function (req, res, next){
-  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, PATCH, OPTIONS")
-  next();
-});
-
 //? FILE STORAGE
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, './public/assets/'); // Specify the directory where files will be stored
   },
   filename: (req, file, cb) => {
+    console.log("🚀 ~ file: server.js:53 ~ file:", file)
     const ext = path.extname(file.originalname);
     const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}${ext}`;
     console.log("file created:", fileName)
@@ -66,8 +64,6 @@ const storage = multer.diskStorage({
 
 
 const upload = multer({ storage: storage });
-
-
 
 app.post("/post", upload.single("file"), async (req, res) => {
   try {
@@ -141,6 +137,7 @@ app.patch("/profile", upload.fields([
     }
 
     const result = await user.save();
+    console.log("🚀 ~ file: server.js:143 ~ ]), ~ result:", result)
     // const post = await Post.find();
     const { pwd, refreshToken, ...rest } = user._doc;
     res.status(201).json({ rest });
@@ -175,9 +172,9 @@ app.post(
   }
 );
 
-app.get('/', (req, res) => {
-    res.send('<h1>Welcome To Me &#x1F449; 🚀!</h1>')
-})
+// app.use('/subdir', express.static(path.join(__dirname, '/public')));
+// app.use('/subdir', require('./routes/subdir'));
+// app.use("/", require("./routes/root"));
 
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
@@ -187,7 +184,6 @@ app.use("/refresh", require("./routes/refresh"));
 app.use(verifyJWT); //? Every route after it will use it
 app.use("/posts", require("./routes/posts"));
 app.use("/users", require("./routes/users"));
-
 
 
 app.all("*", (req, res) => {
