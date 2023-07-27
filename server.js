@@ -15,7 +15,6 @@ const fileUpload = require("express-fileupload");
 const morgan = require("morgan")
 const helmet = require("helmet")
 mongoose.set("strictQuery", true);
-const PORT = process?.env?.PORT ?? 4500;
 const { users, posts } = require("./data/index");
 const User = require("./model/User");
 const Post = require("./model/Post");
@@ -25,16 +24,22 @@ const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
 const corsFunc = require("./headerConfig")
 
+//? Handle Options credentials check before CORS & fetch cookies credentials requirement
+app.use(function (req, res, next)=>{
+  res.header("Access-Control-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+  next()
+  
+})
+app.use(credentials);
+//? Cross Origin Resource Sharing
+app.use(cors(corsOptions));
+const PORT = process?.env?.PORT ?? 4500;
 //? Connect to MongoDB
 connectDB();
 //? Custom middleware logger
 app.use(logger);
 //? 
 // app.use(corsFunc)
-//? Handle Options credentials check before CORS & fetch cookies credentials requirement
-app.use(credentials);
-//? Cross Origin Resource Sharing
-app.use(cors(corsOptions));
 //?  Built-in middleware to handle urlencoded data;
 //?   in other words form data:
 //?   'content-type: application/x-www-form-urlencoded'
