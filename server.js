@@ -52,16 +52,16 @@ app.use(express.json());
 //?  middleware for cookies
 app.use(cookieParser());
 
-module.exports = (req, res) => {
+// module.exports = (req, res) => {
 
-  // Check if the request starts with "/api" and remove the prefix
-  if (req.url.startsWith('/api')) {
-    req.url = req.url.slice(4);
-  }
+//   // Check if the request starts with "/api" and remove the prefix
+//   if (req.url.startsWith('/api')) {
+//     req.url = req.url.slice(4);
+//   }
 
-  // Handle the modified request with your Express app
-  app(req, res);
-};
+//   // Handle the modified request with your Express app
+//   app(req, res);
+// };
 
 //? Server static files
 app.use("/", express.static(path.join(__dirname, "/public")));
