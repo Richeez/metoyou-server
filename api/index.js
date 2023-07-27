@@ -1,3 +1,3 @@
-import app from "../server"
+const api = require("../server")
 
-export default app
+module.exports = api
