@@ -5,7 +5,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-const corsOptions = require("./config/corsOptions");
+// const corsOptions = require("./config/corsOptions");
 const { verifyJWT } = require("./middlewares/verifyJWT");
 const cookieParser = require("cookie-parser");
 const credentials = require("./middlewares/credentials");
@@ -31,7 +31,7 @@ app.use(logger);
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(credentials);
 //? Cross Origin Resource Sharing
-app.use(cors(corsOptions));
+app.use(cors());
 //?  Built-in middleware to handle urlencoded data;
 //?   in other words form data:
 //?   'content-type: application/x-www-form-urlencoded'
