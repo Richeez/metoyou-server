@@ -29,11 +29,7 @@ app.use(function (req, res, next) {
   next()
 
 })
-app.use(credentials);
-//? Cross Origin Resource Sharing
-app.use(cors(corsOptions));
 
-const PORT = process?.env?.PORT ?? 4500;
 //? Connect to MongoDB
 connectDB();
 //? Custom middleware logger
@@ -51,6 +47,9 @@ app.use(helmet())
 app.use(express.json());
 //?  middleware for cookies
 app.use(cookieParser());
+app.use(credentials);
+//? Cross Origin Resource Sharing
+app.use(cors(corsOptions));
 
 // module.exports = (req, res) => {
 
@@ -218,6 +217,7 @@ app.all("*", (req, res) => {
 });
 //? Display error message on the browser
 app.use(errorHandler);
+const PORT = process?.env?.PORT ?? 4500;
 
 mongoose.connection.once("open", () => {
   console.log("Connected to Database");
