@@ -23,11 +23,14 @@ const filePayLoadExists = require("./middlewares/filePayLoadExists");
 const fileExtLimiter = require("./middlewares/fileExtLimiter");
 const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
+const corsFunc = require("./headerConfig")
 
 //? Connect to MongoDB
 connectDB();
 //? Custom middleware logger
 app.use(logger);
+//? 
+app.use(corsFunc)
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(credentials);
 //? Cross Origin Resource Sharing
