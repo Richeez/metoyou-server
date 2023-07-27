@@ -51,10 +51,20 @@ app.use(helmet())
 app.use(express.json());
 //?  middleware for cookies
 app.use(cookieParser());
+module.exports = (req, res) => {
+  // Check if the request starts with "/api" and remove the prefix
+  if (req.url.startsWith('/api')) {
+    req.url = req.url.slice(4);
+  }
+
+  // Handle the modified request with your Express app
+  app(req, res);
+};
 
 //? Server static files
 app.use("/", express.static(path.join(__dirname, "/public")));
 app.post("/assets", express.static(path.join(__dirname, "public/assets")))
+
 
 //? FILE STORAGE
 const storage = multer.diskStorage({
@@ -180,7 +190,7 @@ app.post(
 // app.use('/subdir', express.static(path.join(__dirname, '/public')));
 // app.use('/subdir', require('./routes/subdir'));
 // app.use("/", require("./routes/root"));
-
+app.use("/api", require("./api/index"))
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
 app.use("/logout", require("./routes/logout"));
