@@ -192,7 +192,6 @@ app.post(
 // app.use('/subdir', express.static(path.join(__dirname, '/public')));
 // app.use('/subdir', require('./routes/subdir'));
 // app.use("/", require("./routes/root"));
-app.use("/api", require("./api/index"))
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
 app.use("/logout", require("./routes/logout"));

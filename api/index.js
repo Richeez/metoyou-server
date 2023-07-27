@@ -1,3 +1,3 @@
-const api = require("../server")
+import api from "../server"
 
-module.exports = api
+export default api
