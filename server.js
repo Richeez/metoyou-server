@@ -31,7 +31,7 @@ app.use(logger);
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(credentials);
 //? Cross Origin Resource Sharing
-app.use(cors());
+app.use(cors(corsOptions));
 //?  Built-in middleware to handle urlencoded data;
 //?   in other words form data:
 //?   'content-type: application/x-www-form-urlencoded'
@@ -179,7 +179,7 @@ app.use("/logout", require("./routes/logout"));
 app.use("/refresh", require("./routes/refresh"));
 
 app.get('/', (req, res) => {
-  res.send('<h1>Welcome to Me to You Social API...🚀</h1>')
+  res.send('<h2>Welcome to Me &#x1F449; You Social API...🚀</h2>')
 })
 
 app.use(verifyJWT); //? Every route after it will use it
