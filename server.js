@@ -30,7 +30,7 @@ connectDB();
 //? Custom middleware logger
 app.use(logger);
 //? 
-app.use(corsFunc)
+// app.use(corsFunc)
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(credentials);
 //? Cross Origin Resource Sharing
