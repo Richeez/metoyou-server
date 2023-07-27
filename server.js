@@ -5,10 +5,10 @@ const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-// const corsOptions = require("./config/corsOptions");
+const corsOptions = require("./config/corsOptions");
 const { verifyJWT } = require("./middlewares/verifyJWT");
 const cookieParser = require("cookie-parser");
-// const credentials = require("./middlewares/credentials");
+const credentials = require("./middlewares/credentials");
 const mongoose = require("mongoose");
 const connectDB = require("./config/DBConn");
 const fileUpload = require("express-fileupload");
@@ -32,9 +32,9 @@ app.use(logger);
 //? 
 app.use(corsFunc)
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
-// app.use(credentials);
+app.use(credentials);
 //? Cross Origin Resource Sharing
-app.use(cors());
+app.use(cors(corsOptions));
 //?  Built-in middleware to handle urlencoded data;
 //?   in other words form data:
 //?   'content-type: application/x-www-form-urlencoded'
