@@ -8,7 +8,7 @@ const cors = require("cors");
 // const corsOptions = require("./config/corsOptions");
 const { verifyJWT } = require("./middlewares/verifyJWT");
 const cookieParser = require("cookie-parser");
-const credentials = require("./middlewares/credentials");
+// const credentials = require("./middlewares/credentials");
 const mongoose = require("mongoose");
 const connectDB = require("./config/DBConn");
 const fileUpload = require("express-fileupload");
@@ -32,7 +32,7 @@ app.use(logger);
 //? 
 app.use(corsFunc)
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
-app.use(credentials);
+// app.use(credentials);
 //? Cross Origin Resource Sharing
 app.use(cors());
 //?  Built-in middleware to handle urlencoded data;
