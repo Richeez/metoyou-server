@@ -1,1 +1,27 @@
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio blanditiis, saepe accusamus facere asperiores nam ipsa soluta perspiciatis rem temporibus exercitationem eos enim rerum reiciendis ex at minima. Aspernatur adipisci itaque minus? Veniam, beatae hic odit unde eum iure temporibus explicabo tenetur optio, corrupti nulla minus nemo maxime mollitia libero.
+
+    
+
+
+/*{
+  "version": 2,
+  "builds": [
+    {
+      "src": "./server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      }
+    }
+  ]
+}
+*/

@@ -54,7 +54,6 @@ const storage = multer.diskStorage({
     cb(null, './public/assets/'); // Specify the directory where files will be stored
   },
   filename: (req, file, cb) => {
-    console.log("🚀 ~ file: server.js:53 ~ file:", file)
     const ext = path.extname(file.originalname);
     const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}${ext}`;
     console.log("file created:", fileName)
@@ -137,8 +136,6 @@ app.patch("/profile", upload.fields([
     }
 
     const result = await user.save();
-    console.log("🚀 ~ file: server.js:143 ~ ]), ~ result:", result)
-    // const post = await Post.find();
     const { pwd, refreshToken, ...rest } = user._doc;
     res.status(201).json({ rest });
   } catch (err) {
@@ -180,6 +177,10 @@ app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
 app.use("/logout", require("./routes/logout"));
 app.use("/refresh", require("./routes/refresh"));
+
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to Me to You Social API...🚀</h1>')
+})
 
 app.use(verifyJWT); //? Every route after it will use it
 app.use("/posts", require("./routes/posts"));
