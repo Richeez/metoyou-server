@@ -8,4 +8,4 @@ const allowedOrigins =
     ];
 
 
-module.exports = allowedOrigins
+module.exports = allowedOrigins;

@@ -23,7 +23,6 @@ const fileExtLimiter = require("./middlewares/fileExtLimiter");
 const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
 // const corsFunc = require("./headerConfig")
-
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(function (req, res, next) {
   res.header("Access-Control-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
@@ -33,6 +32,7 @@ app.use(function (req, res, next) {
 app.use(credentials);
 //? Cross Origin Resource Sharing
 app.use(cors(corsOptions));
+
 const PORT = process?.env?.PORT ?? 4500;
 //? Connect to MongoDB
 connectDB();
