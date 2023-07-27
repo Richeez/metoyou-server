@@ -25,7 +25,7 @@ const multer = require("multer");
 const corsFunc = require("./headerConfig")
 
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
-app.use(function (req, res, next)=>{
+app.use(function (req, res, next){
   res.header("Access-Control-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
   next()
   
