@@ -34,37 +34,41 @@ const allowedOrigins =
     'http://localhost:5173',
   ];
 
-app.use(cors({
-  allowedOrigins,
-  credentials: true
-}
-));
+app.use(
+  cors({
+    origin: allowedOrigins, // Replace this with the allowed origin(s)
+    credentials: true, // Allow sending credentials like cookies or authorization headers
+    methods: 'GET, POST, PUT, PATCH, DELETE, OPTIONS', // Allow specific HTTP methods
+    allowedHeaders: 'Authorization, Origin, X-Requested-With, Accept, Content-Type', // Allow specific HTTP headers
+    maxAge: 3600, // Set how long the preflight request can be cached (in seconds)
+  })
+);
 
 
 
 
-// app.use(function (req, res, next) {
-//   // Allow requests from 'https://metoyou.vercel.app'
-//   res.setHeader('Access-Control-Allow-Origin', 'https://metoyou.vercel.app');
+app.use(function (req, res, next) {
+  // Allow requests from 'https://metoyou.vercel.app'
+  // res.setHeader('Access-Control-Allow-Origin', 'https://metoyou.vercel.app');
 
-//   // Allow specific HTTP methods
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  // Allow specific HTTP methods
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
 
-//   // Allow specific HTTP headers
-//   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Accept, Content-Type');
+  // Allow specific HTTP headers
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Accept, Content-Type');
 
-//   // Set how long the preflight request can be cached (in seconds)
-//   res.setHeader('Access-Control-Max-Age', '3600');
+  // Set how long the preflight request can be cached (in seconds)
+  // res.setHeader('Access-Control-Max-Age', '3600');
 
-//   // Handle preflight requests (OPTIONS method)
-//   if (req.method === 'OPTIONS') {
-//     res.status(200).end();
-//     return;
-//   }
+  // Handle preflight requests (OPTIONS method)
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
-//   // Pass control to the next middleware or route handler
-//   next();
-// });
+  // Pass control to the next middleware or route handler
+  next();
+});
 
 
 
