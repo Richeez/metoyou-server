@@ -24,16 +24,60 @@ const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
 // const corsFunc = require("./headerConfig")
 
+//? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(credentials);
 //? Cross Origin Resource Sharing
+
+// app.use((req, res, next) => {
+//   // Allow requests from 'https://metoyou.vercel.app'
+//   res.setHeader('Access-Control-Allow-Origin', 'https://metoyou.vercel.app');
+
+//   // Allow specific HTTP methods
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+
+//   // Allow specific HTTP headers
+//   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Accept, Content-Type');
+
+//   // Handle preflight requests (OPTIONS method)
+//   if (req.method === 'OPTIONS') {
+//     res.status(200).end();
+//     return;
+//   }
+
+//   // Pass control to the next middleware or route handler
+//   next();
+// });
+
+
+
+app.use(function (req, res, next) {
+  // Allow requests from 'https://metoyou.vercel.app'
+  res.setHeader('Access-Control-Allow-Origin', 'https://metoyou.vercel.app');
+
+  // Allow specific HTTP methods
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+
+  // Allow specific HTTP headers
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Accept, Content-Type');
+
+  // Set how long the preflight request can be cached (in seconds)
+  res.setHeader('Access-Control-Max-Age', '3600');
+
+  // Handle preflight requests (OPTIONS method)
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // Pass control to the next middleware or route handler
+  next();
+});
+
+// Define your API routes and other middleware
+// For example:
+
 app.use(cors(corsOptions));
 
-//? Handle Options credentials check before CORS & fetch cookies credentials requirement
-app.use(function (req, res, next) {
-  res.header("Access-Control-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-  next()
-
-})
 
 //? Connect to MongoDB
 connectDB();
