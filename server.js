@@ -27,8 +27,18 @@ const multer = require("multer");
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 // app.use(credentials);
 //? Cross Origin Resource Sharing
+const allowedOrigins =
+  ['https://metoyou.vercel.app',
+    'https://www.metoyou.vercel.app',
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
+  ];
 
-app.use(cors());
+app.use(cors({
+  allowedOrigins,
+  credentials: true
+}
+));
 
 
 
