@@ -20,7 +20,7 @@ const handleLogIn = async (req, res) => {
                 }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "10m" } //30m
+            { expiresIn: "15m" } //30m
         );
         const newRefreshToken = jwt.sign(
             {
@@ -28,7 +28,7 @@ const handleLogIn = async (req, res) => {
 
             },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: "5m" } //1d
+            { expiresIn: "7d" } //1d
         );
 
         let newRefreshTokenArray =

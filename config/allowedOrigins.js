@@ -1,9 +1,6 @@
 const allowedOrigins =
     ['https://metoyou.vercel.app',
-        'www.metoyou.vercel.app',
-        'http://127.0.0.1:5500',
-        'http://localhost:4000',
-        'http://localhost:3000',
+        'https://www.metoyou.vercel.app',
         'http://127.0.0.1:5173'
     ];
 
