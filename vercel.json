@@ -6,7 +6,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://metoyou.vercel.app"
+          "value": "https://metoyou.vercel.app, https://www.metoyou.vercel.app"
         },
         {
           "key": "Access-Control-Allow-Credentials",

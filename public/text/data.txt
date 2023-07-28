@@ -5,7 +5,7 @@
 
 /*
 */
-
+// 
 {
   "version": 2,
   "builds": [
@@ -20,7 +20,7 @@
       "dest": "/api",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       "headers": {
-        "Access-Control-Allow-Origin": "https://metoyou.vercel.app/",
+        "Access-Control-Allow-Origin": "https://metoyou.vercel.app, https://www.metoyou.vercel.app",
         "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
       }
