@@ -23,6 +23,11 @@ const fileExtLimiter = require("./middlewares/fileExtLimiter");
 const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
 // const corsFunc = require("./headerConfig")
+
+app.use(credentials);
+//? Cross Origin Resource Sharing
+app.use(cors(corsOptions));
+
 //? Handle Options credentials check before CORS & fetch cookies credentials requirement
 app.use(function (req, res, next) {
   res.header("Access-Control-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
@@ -47,9 +52,6 @@ app.use(helmet())
 app.use(express.json());
 //?  middleware for cookies
 app.use(cookieParser());
-app.use(credentials);
-//? Cross Origin Resource Sharing
-app.use(cors(corsOptions));
 
 // module.exports = (req, res) => {
 
