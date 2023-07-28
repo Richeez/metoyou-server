@@ -1,3 +1,3 @@
-// import api from "../server"
+import api from "../server"
 
-// export default api
+export default api
