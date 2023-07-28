@@ -7,6 +7,10 @@
         {
           "key": "Access-Control-Allow-Origin",
           "value": "https://metoyou.vercel.app"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
         }
       ]
     }
