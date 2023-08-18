@@ -44,7 +44,7 @@ const handleRefreshToken = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'None',
-            maxAge: 24 * 60 * 60 * 1000,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         }).json({ accessToken });
     } catch (error) {
         console.log('Error refreshing token:', error);

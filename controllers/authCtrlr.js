@@ -54,7 +54,7 @@ const handleLogIn = async (req, res) => {
         const user = await foundUser.save();
         const { pwd, refreshToken, ...rest } = user._doc;
         console.log(rest);
-        res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 }).json({ rest, accessToken }) /*secure: true*/;
+        res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 7 * 24 * 60 * 60 * 1000 }).json({ rest, accessToken }) /*secure: true*/;
         res.end()
 
     } else {

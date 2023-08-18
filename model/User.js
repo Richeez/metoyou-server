@@ -35,7 +35,11 @@ const userSchema = new Schema({
         type: String,
         default: ""
     },
-    friends: {
+    followers: {
+        type: Array,
+        default: []
+    },
+    followings: {
         type: Array,
         default: []
     },

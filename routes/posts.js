@@ -1,5 +1,5 @@
 const express = require("express")
-const { getUserPosts, getPostFeeds, likePost } = require("../controllers/posts.js");
+const { getUserPosts, getPostFeeds, likePost, postComments } = require("../controllers/posts.js");
 
 const router = express.Router()
 
@@ -9,6 +9,6 @@ router.get("/:userId/posts", getUserPosts)
 
 //? UPDATE 
 router.patch("/:id/like", likePost)
-
+router.put("/comment/post", postComments)
 
 module.exports = router; 

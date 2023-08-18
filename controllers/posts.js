@@ -29,7 +29,7 @@ const likePost = async (req, res) => {
     try {
         const { id } = req.params;
         const { userId } = req.body;
-        const post = await Post.find(id)
+        const post = await Post.findOne({ _id: id })
         const isLiked = post.likes.get(userId)
         if (isLiked) {
             post.likes.delete(userId)
@@ -50,9 +50,32 @@ const likePost = async (req, res) => {
         res.status(404).json({ message: err.message })
     }
 }
+const postComments = async (req, res) => {
+
+    try {
+        const { postId, comment, picsPath } = req.body;
+        const comments = {
+            user: req.user.id,
+            username: req.user.username,
+            picsPath,
+            comment
+        }
+        console.log("id", req.user.id)
+        console.log("username", req.user.username)
+        const post = await Post.findById(postId)
+        post.comments.push(comments)
+        await post.save()
+        res.status(200).json(post)
+    } catch (err) {
+        res.status(404).json({ message: err.message })
+    }
+}
+
+
 
 module.exports = {
     getPostFeeds,
     likePost,
-    getUserPosts
+    getUserPosts,
+    postComments
 };
