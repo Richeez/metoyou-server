@@ -61,7 +61,7 @@ app.use("/", express.static(path.join(__dirname, "/public")));
 app.post("/assets", express.static(path.join(__dirname, "public/assets")))
 
 
-app.use(function (req, res, next) {
+/* app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,PATCH');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
@@ -75,7 +75,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-
+*/
 
 
 //? Connect to MongoDB
@@ -123,6 +123,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+
+
+app.get('/', (req, res) => {
+    res.send('<h2>Welcome to Me &#x1F449; You Social API...🚀</h2>')
+})
+
+app.use("/register", require("./routes/register"));
+app.use("/auth", require("./routes/auth"));
+app.use("/logout", require("./routes/logout"));
+app.use("/refresh", require("./routes/refresh"));
+
+app.use(verifyJWT); //? Every route after it will use it
 app.post("/post", upload.single("file"), async (req, res) => {
     try {
         const { userId, description, } = req.body;
@@ -219,18 +232,6 @@ app.post(
         });
     }
 );
-
-
-app.get('/', (req, res) => {
-    res.send('<h2>Welcome to Me &#x1F449; You Social API...🚀</h2>')
-})
-
-app.use("/register", require("./routes/register"));
-app.use("/auth", require("./routes/auth"));
-app.use("/logout", require("./routes/logout"));
-app.use("/refresh", require("./routes/refresh"));
-
-app.use(verifyJWT); //? Every route after it will use it
 app.use("/posts", require("./routes/posts"));
 app.use("/users", require("./routes/users"));
 
