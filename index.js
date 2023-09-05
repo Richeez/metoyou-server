@@ -137,6 +137,7 @@ app.use("/refresh", require("./routes/refresh"));
 
 app.use(verifyJWT); //? Every route after it will use it
 app.post("/post", upload.single("file"), async (req, res) => {
+
     try {
         const { userId, description, } = req.body;
         const user = await User.findById(userId).exec();
@@ -144,14 +145,15 @@ app.post("/post", upload.single("file"), async (req, res) => {
             userId,
             username: user?.username,
             description,
-            userPicsPath: user?.picsPath,
+            userPicsPath: user?.picsPath.toString(),
             location: user?.location,
             likes: {},
             comments: [],
         });
         if (req?.file) {
-            newPost.picsPath = req.file?.filename;
+            newPost.picsPath = req.file?.filename.toString();
         }
+
         await newPost.save();
         const post = await Post.find();
         res.status(201).json(post);
@@ -178,17 +180,25 @@ app.patch("/profile", upload.fields([
         if (nickname) {
             user.nickname = nickname;
         }
+        let updatedPicsPath = user.picsPath.toString(); // Initialize with the current picsPath
 
         if (req?.files) {
 
             if (req?.files?.profilePicture) {
                 const file = req.files;
-                user.picsPath = file.profilePicture[0].filename;
+                if (user.picsPath !== file.profilePicture[0].filename.toString()) {
+                    // Update the user's picsPath and all related posts in a single query
+                    await Promise.all([
+                        User.findByIdAndUpdate(userId, { $set: { picsPath: file.profilePicture[0].filename.toString() } }),
+                        Post.updateMany({ userId }, { $set: { userPicsPath: file.profilePicture[0].filename.toString() } }),
+                    ]);
+                    updatedPicsPath = file.profilePicture[0].filename.toString(); // Update the value to the new picsPath
+                }
             }
             if (req.files.coverImage) {
                 const file = req.files;
 
-                user.backgroundBg = file.coverImage[0].filename;
+                user.backgroundBg = file.coverImage[0].filename.toString();
 
             }
         }
@@ -199,9 +209,16 @@ app.patch("/profile", upload.fields([
         if (occupation) {
             user.occupation = occupation;
         }
-        const result = await user.save();
+        await user.save();
+
+        // Find all posts by the user and update their picsPath
+        const posts = await Post.find({ userId });
+        for (const post of posts) {
+            post.userPicsPath = updatedPicsPath; // Use the updated picsPath
+            await post.save();
+        }
         const { pwd, refreshToken, ...rest } = user._doc;
-        res.status(201).json({ rest });
+        res.status(201).json({ rest, posts });
     } catch (err) {
         res.status(409).json({ message: err.message });
     }

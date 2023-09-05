@@ -4,12 +4,12 @@ const Post = require("../model/Post.js");
 
 //? READ
 const getPostFeeds = async (req, res) => {
-
     try {
-        const post = await Post.find()
-        res.status(200).json(post)
+        const posts = await Post.find();
+        res.status(200).json(posts);
     } catch (err) {
-        res.status(404).json({ message: err.message })
+        console.error(err); // Log the error for debugging
+        res.status(500).json({ message: "Internal server error" }); // Respond with an error status and message
     }
 }
 
