@@ -19,11 +19,11 @@ const PostSchema = new Schema({
         {
             user: {
                 type: mongoose.Schema.Types.ObjectId,
-                require: true
+                required: true
             },
             username: {
                 type: String,
-                require: true
+                required: true
 
             },
             picsPath: {
@@ -31,7 +31,7 @@ const PostSchema = new Schema({
             },
             comment: {
                 type: String,
-                require: true
+                required: true
             }
 
         }
@@ -39,12 +39,11 @@ const PostSchema = new Schema({
     ],
 
 
-    picsPath: { type: String, required: true },
-    userPicsPath: String,
+    picsPath: [],
+    userPicsPath: [],
     location: String,
     description: String,
     occupation: String,
-    refreshToken: [String]
 }, { timestamps: true })
 
 module.exports = mongoose.model('Post', PostSchema);

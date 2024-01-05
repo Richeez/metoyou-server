@@ -32,8 +32,6 @@ const getUserFriends = async (req, res) => {
 
 //? UPDATE
 
-
-
 const addOrRemoveFollower = async (req, res) => {
   try {
     const { id, followerId } = req.params;
@@ -89,9 +87,70 @@ const getFollowersPosts = async (req, res) => {
   }
 };
 
+const editProfile = async (req, res) => {
+  const { userId, username, nickname, location, occupation, imageArray } = req.body;
+  console.log("🚀 ~ file: users.js:92 ~ editProfile ~ req.body:", req.body)
+  if (!req.body) return res.status(400).json({ "message": "You need to make new changes" });
+  const duplicate = await User.findOne({ username }).lean().exec()
+  if (duplicate && duplicate._id.toString() !== userId) return res.status(409).json({ "message": "Username Exist!" });
+
+  try {
+    const user = await User.findById(userId).exec();
+    if (username) {
+      user.username = username;
+    }
+    if (nickname) {
+      user.nickname = nickname;
+    }
+    let updatedPicsPath = user?.picsPath; //? Initialize with the current picsPath
+
+    if (imageArray.length !== 0) {
+      const profileImage = imageArray.find(child => child.target === "profile");
+      if (profileImage) {
+        if (user?.picsPath[0]?.url !== profileImage?.url) {
+          //? Update the user's picsPath and all related posts in a single query
+          await Promise.all([
+            User.findByIdAndUpdate(userId, { $set: { picsPath: profileImage } }),
+            Post.updateMany({ userId }, { $set: { userPicsPath: profileImage } }),
+          ]);
+          updatedPicsPath = profileImage; // Update the value to the new picsPath
+        }
+      }
+
+      const coverImageChild = imageArray.find(child => child.target === "cover");
+
+      if (coverImageChild) {
+
+        user.backgroundBg = coverImageChild;
+
+      }
+    }
+
+    if (location) {
+      user.location = location;
+    }
+    if (occupation) {
+      user.occupation = occupation;
+    }
+    await user.save();
+
+    // Find all posts by the user and update their picsPath
+    const posts = await Post.find({ userId });
+    for (const post of posts) {
+      post.userPicsPath = updatedPicsPath; // Use the updated picsPath
+      await post.save();
+    }
+    const { pwd, refreshToken, ...rest } = user._doc;
+    res.status(201).json({ rest, posts });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 module.exports = {
   getUser,
   getUserFriends,
   addOrRemoveFollower,
-  getFollowersPosts
+  getFollowersPosts,
+  editProfile
 };

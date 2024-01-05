@@ -41,17 +41,6 @@ const filePayLoadExists = require("./middlewares/filePayLoadExists");
 const fileExtLimiter = require("./middlewares/fileExtLimiter");
 const fileSizeLimiter = require("./middlewares/fileSizeLimiter");
 const multer = require("multer");
-// const corsFunc = require("./headerConfig")
-
-//? Handle Options credentials check before CORS & fetch cookies credentials requirement
-//? Cross Origin Resource Sharing
-// const allowedOrigins =
-//   ['https://metoyou.vercel.app',
-//     'www.metoyou.vercel.app',
-//     'http://127.0.0.1:5173',
-//     'http://localhost:5173',
-//   ];
-
 
 
 app.use(cors(corsOptions));
@@ -80,12 +69,7 @@ app.post("/assets", express.static(path.join(__dirname, "public/assets")))
 
 //? Connect to MongoDB
 connectDB();
-//? Custom middleware logger
-// app.use(logger);
-//? 
-// app.use(corsFunc)
-//?  Built-in middleware to handle urlencoded data;
-//?   in other words form data:
+
 //?   'content-type: application/x-www-form-urlencoded'
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("common"))
@@ -96,32 +80,22 @@ app.use(express.json());
 //?  middleware for cookies
 app.use(cookieParser());
 
-// module.exports = (req, res) => {
-
-//   // Check if the request starts with "/api" and remove the prefix
-//   if (req.url.startsWith('/api')) {
-//     req.url = req.url.slice(4);
-//   }
-
-//   // Handle the modified request with your Express app
-//   app(req, res);
-// };
 
 
 //? FILE STORAGE
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './public/assets/'); // Specify the directory where files will be stored
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}${ext}`;
-        cb(null, fileName); // Use a unique filename for each uploaded file
-    },
-});
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, './public/assets/'); // Specify the directory where files will be stored
+//     },
+//     filename: (req, file, cb) => {
+//         const ext = path.extname(file.originalname);
+//         const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}${ext}`;
+//         cb(null, fileName); // Use a unique filename for each uploaded file
+//     },
+// });
 
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 
 
@@ -136,119 +110,96 @@ app.use("/logout", require("./routes/logout"));
 app.use("/refresh", require("./routes/refresh"));
 
 app.use(verifyJWT); //? Every route after it will use it
-app.post("/post", upload.single("file"), async (req, res) => {
-
-    try {
-        const { userId, description, } = req.body;
-        const user = await User.findById(userId).exec();
-        const newPost = new Post({
-            userId,
-            username: user?.username,
-            description,
-            userPicsPath: user?.picsPath.toString(),
-            location: user?.location,
-            likes: {},
-            comments: [],
-        });
-        if (req?.file) {
-            newPost.picsPath = req.file?.filename.toString();
-        }
-
-        await newPost.save();
-        const post = await Post.find();
-        res.status(201).json(post);
-    } catch (err) {
-        res.status(409).json({ message: err.message });
-    }
-})
-
-
-app.patch("/profile", upload.fields([
-    { name: "profilePicture", maxCount: 1 },
-    { name: "coverImage", maxCount: 1 },
-]), async (req, res) => {
-    const { userId, username, nickname, location, occupation } = req.body;
-    const duplicate = await User.findOne({ username }).lean().exec()
-    if (!req.body) return res.status(400).json({ "message": "You need to make new changes" });
-    if (duplicate && duplicate._id.toString() !== userId) return res.status(409).json({ "message": "Username Exist!" });
-
-    try {
-        const user = await User.findById(userId).exec();
-        if (username) {
-            user.username = username;
-        }
-        if (nickname) {
-            user.nickname = nickname;
-        }
-        let updatedPicsPath = user.picsPath.toString(); // Initialize with the current picsPath
-
-        if (req?.files) {
-
-            if (req?.files?.profilePicture) {
-                const file = req.files;
-                if (user.picsPath !== file.profilePicture[0].filename.toString()) {
-                    // Update the user's picsPath and all related posts in a single query
-                    await Promise.all([
-                        User.findByIdAndUpdate(userId, { $set: { picsPath: file.profilePicture[0].filename.toString() } }),
-                        Post.updateMany({ userId }, { $set: { userPicsPath: file.profilePicture[0].filename.toString() } }),
-                    ]);
-                    updatedPicsPath = file.profilePicture[0].filename.toString(); // Update the value to the new picsPath
-                }
-            }
-            if (req.files.coverImage) {
-                const file = req.files;
-
-                user.backgroundBg = file.coverImage[0].filename.toString();
-
-            }
-        }
-
-        if (location) {
-            user.location = location;
-        }
-        if (occupation) {
-            user.occupation = occupation;
-        }
-        await user.save();
-
-        // Find all posts by the user and update their picsPath
-        const posts = await Post.find({ userId });
-        for (const post of posts) {
-            post.userPicsPath = updatedPicsPath; // Use the updated picsPath
-            await post.save();
-        }
-        const { pwd, refreshToken, ...rest } = user._doc;
-        res.status(201).json({ rest, posts });
-    } catch (err) {
-        res.status(409).json({ message: err.message });
-    }
-});
 
 
 
 
-app.use(fileUpload())
-app.post(
-    "/upload",
-    fileUpload({ createParentPath: true }),
-    filePayLoadExists,
-    fileExtLimiter([".png", ".jpg", ".jpeg"]),
-    fileSizeLimiter,
-    (req, res) => {
-        const files = req.files;
-        console.log("new files", files);
-        Object.keys(files).forEach((key) => {
-            const filePath = path.join(__dirname, "uploads", files[key].name);
-            files[key].mv(filePath, (err) => {
-                if (err) return res.status(500).json({ status: "error", message: err });
-            });
-        });
-        return res.json({
-            status: "success",
-            message: Object.keys(files).toString(),
-        });
-    }
-);
+// app.patch("/profile", upload.fields([
+//     { name: "profilePicture", maxCount: 1 },
+//     { name: "coverImage", maxCount: 1 },
+// ]), async (req, res) => {
+//     const { userId, username, nickname, location, occupation, profilePicture, coverImage } = req.body;
+//     const duplicate = await User.findOne({ username }).lean().exec()
+//     if (!req.body) return res.status(400).json({ "message": "You need to make new changes" });
+//     if (duplicate && duplicate._id.toString() !== userId) return res.status(409).json({ "message": "Username Exist!" });
+
+//     try {
+//         const user = await User.findById(userId).exec();
+//         if (username) {
+//             user.username = username;
+//         }
+//         if (nickname) {
+//             user.nickname = nickname;
+//         }
+//         let updatedPicsPath = user.picsPath.toString(); // Initialize with the current picsPath
+
+//         if (req?.files) {
+
+//             if (req?.files?.profilePicture) {
+//                 const file = req.files;
+//                 if (user.picsPath !== file.profilePicture[0].filename.toString()) {
+//                     // Update the user's picsPath and all related posts in a single query
+//                     await Promise.all([
+//                         User.findByIdAndUpdate(userId, { $set: { picsPath: file.profilePicture[0].filename.toString() } }),
+//                         Post.updateMany({ userId }, { $set: { userPicsPath: file.profilePicture[0].filename.toString() } }),
+//                     ]);
+//                     updatedPicsPath = file.profilePicture[0].filename.toString(); // Update the value to the new picsPath
+//                 }
+//             }
+//             if (req.files.coverImage) {
+//                 const file = req.files;
+
+//                 user.backgroundBg = file.coverImage[0].filename.toString();
+
+//             }
+//         }
+
+//         if (location) {
+//             user.location = location;
+//         }
+//         if (occupation) {
+//             user.occupation = occupation;
+//         }
+//         await user.save();
+
+//         // Find all posts by the user and update their picsPath
+//         const posts = await Post.find({ userId });
+//         for (const post of posts) {
+//             post.userPicsPath = updatedPicsPath; // Use the updated picsPath
+//             await post.save();
+//         }
+//         const { pwd, refreshToken, ...rest } = user._doc;
+//         res.status(201).json({ rest, posts });
+//     } catch (err) {
+//         res.status(409).json({ message: err.message });
+//     }
+// });
+
+
+
+
+// app.use(fileUpload())
+// app.post(
+//     "/upload",
+//     fileUpload({ createParentPath: true }),
+//     filePayLoadExists,
+//     fileExtLimiter([".png", ".jpg", ".jpeg"]),
+//     fileSizeLimiter,
+//     (req, res) => {
+//         const files = req.files;
+//         console.log("new files", files);
+//         Object.keys(files).forEach((key) => {
+//             const filePath = path.join(__dirname, "uploads", files[key].name);
+//             files[key].mv(filePath, (err) => {
+//                 if (err) return res.status(500).json({ status: "error", message: err });
+//             });
+//         });
+//         return res.json({
+//             status: "success",
+//             message: Object.keys(files).toString(),
+//         });
+//     }
+// );
 app.use("/posts", require("./routes/posts"));
 app.use("/users", require("./routes/users"));
 
@@ -276,4 +227,3 @@ mongoose.connection.on("error", (err) => {
     console.log("Error:", err);
 
 });
-

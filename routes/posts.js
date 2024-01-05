@@ -1,7 +1,11 @@
 const express = require("express")
-const { getUserPosts, getPostFeeds, likePost, postComments } = require("../controllers/posts.js");
+const { getUserPosts, getPostFeeds, likePost, postComments, createPost } = require("../controllers/posts.js");
 
 const router = express.Router()
+
+//? CREATE
+
+router.post("/new-post", createPost)
 
 //? READ
 router.get("/", getPostFeeds)

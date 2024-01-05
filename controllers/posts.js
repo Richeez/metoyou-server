@@ -1,5 +1,47 @@
 const Post = require("../model/Post.js");
+const User = require("../model/User.js");
 
+//? CREATE
+
+const createPost = async (req, res) => {
+
+
+    try {
+        const { userId, description, attachments } = req?.body ?? {};
+        console.log("🚀 ~ file: posts.js:11 ~ createPost ~ req?.body:", req?.body)
+
+        const user = await User.findById(userId).exec();
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const newPost = new Post({
+            userId,
+            username: user.username,
+            description,
+            userPicsPath: user.picsPath,
+            location: user.location,
+            likes: {},
+            comments: [],
+        });
+
+        if (Array.isArray(attachments)) {
+            newPost.picsPath = newPost.picsPath.concat(attachments);
+        } else if (attachments) {
+            newPost.picsPath.push(attachments);
+        }
+
+
+        await newPost.save();
+
+        const posts = await Post.find();
+        res.status(201).json(posts);
+    } catch (err) {
+        console.error('Error creating post:', err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+
+}
 
 
 //? READ
@@ -77,5 +119,6 @@ module.exports = {
     getPostFeeds,
     likePost,
     getUserPosts,
-    postComments
+    postComments,
+    createPost
 };

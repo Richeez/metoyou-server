@@ -28,12 +28,13 @@ const userSchema = new Schema({
         required: true
     },
     picsPath: {
-        type: String,
-        default: ""
+        type: Array,
+        default: []
+
     },
     backgroundBg: {
-        type: String,
-        default: ""
+        type: Array,
+        default: []
     },
     followers: {
         type: Array,
@@ -43,11 +44,11 @@ const userSchema = new Schema({
         type: Array,
         default: []
     },
+    refreshToken: String,
     viewedProfile: Number,
     impressions: Number,
     location: String,
-    occupation: String,
-    refreshToken: [String]
+    occupation: String
 }, { timestamps: true }
 );
 
